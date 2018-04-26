@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 Future<Game> fetchGame() async {
-  final response = await http.get('http://localhost:50566/api/games/Random');
+  final response = await http.get('http://192.168.1.216:45455/api/games/Random');
   final jsonResponse = json.decode(response.body);
   return Game.fromJson(jsonResponse);
 }
@@ -19,12 +19,14 @@ class Game{
 
     factory Game.fromJson(Map<String, dynamic> json){
       return new Game(
-        title: json['Title'],
-        platform: json['Platform'],
-        genre: json['Genre']
+        title: json['title'],
+        platform: json['platform'],
+        genre: json['genre']
       );
     }
 }
+
+void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
   @override
