@@ -1,106 +1,59 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
 import 'package:http/http.dart' as http;
 
-void main() => runApp(new MyApp());
+Future<Game> fetchGame() async {
+  final response = await http.get('http://localhost:50566/api/games/Random');
+  final jsonResponse = json.decode(response.body);
+  return Game.fromJson(jsonResponse);
+}
+
+class Game{
+        final String title;
+        final String platform;
+        final String genre;
+
+        Game({this.title, this.platform, this.genre});
+
+    factory Game.fromJson(Map<String, dynamic> json){
+      return new Game(
+        title: json['Title'],
+        platform: json['Platform'],
+        genre: json['Genre']
+      );
+    }
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'That cool little thing',
-      theme: new ThemeData(primaryColor: Colors.white),
-      home: new RandomWords()
-    );
-  }
-}
-
-class RandomWords extends StatefulWidget{
-  @override
-  createState()=> new RandomWordsState();
-}
-
-class RandomWordsState extends State<RandomWords>{
-    final _suggestions = <WordPair>[];
-    final _saved = new Set<WordPair>();
-    final _biggerFont = const TextStyle(fontSize: 18.0);
-  
-  @override
-  Widget build(BuildContext context){
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Random App'),
-        actions: <Widget>[new IconButton(icon: new Icon(Icons.list), onPressed: _pushSaved)],
+      title: 'Fetch Data Example',
+      theme: new ThemeData(
+        primarySwatch: Colors.blue,
       ),
-      body: _buildSuggestions(),
-    );
-  }
-  Widget _buildSuggestions(){
-    return new ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemBuilder: (context, i){
-        if(i.isOdd) return new Divider();
+      home: new Scaffold(
+        appBar: new AppBar(
+          title: new Text('Get me a random game'),
+        ),
+        body: new Center(
+          child: new FutureBuilder<Game>(
+            future: fetchGame(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return new Text(snapshot.data.title);
+              } else if (snapshot.hasError) {
+                return new Text("${snapshot.error}");
+              }
 
-        final index = i ~/2;
-        if(index >= _suggestions.length){
-          _suggestions.addAll(generateWordPairs().take(10));
-        }
-        return _buildRow(_suggestions[index]);
-      },
-
-    );
-  }
-
-    Widget _buildRow(WordPair pair) {
-      final hearted = _saved.contains(pair);
-    return new ListTile(
-      title: new Text(
-        pair.asPascalCase,
-        style: _biggerFont,
-      ),
-      trailing: new Icon(hearted ? Icons.favorite : Icons.favorite_border,
-      color: hearted? Colors.red: null,
-    ),
-    onTap: (){
-      setState((){
-        if(hearted){
-          _saved.remove(pair);
-        }else{
-          _saved.add(pair);
-        }
-      });
-    },
-    );
-  }
-void _pushSaved() {
-  Navigator.of(context).push(
-    new MaterialPageRoute(
-      builder: (context) {
-        final tiles = _saved.map(
-          (pair) {
-            return new ListTile(
-              title: new Text(
-                pair.asPascalCase,
-                style: _biggerFont,
-              ),
-            );
-          },
-        );
-        final divided = ListTile
-          .divideTiles(
-            context: context,
-            tiles: tiles,
-          )
-          .toList();
-                  return new Scaffold(
-          appBar: new AppBar(
-            title: new Text('Saved Suggestions'),
+              // By default, show a loading spinner
+              return new CircularProgressIndicator();
+            },
           ),
-          body: new ListView(children: divided),
-        );
-      },
-    ),
-  );
-}
-
+        ),
+      ),
+    );
+  }
 }
