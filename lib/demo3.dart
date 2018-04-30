@@ -3,9 +3,9 @@ import 'package:english_words/english_words.dart';
 import 'package:http/http.dart' as http;
 
 
-void main() => runApp(new MyApp());
+void main() => runApp(new ListViewDemo());
 
-class MyApp extends StatelessWidget {
+class ListViewDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(

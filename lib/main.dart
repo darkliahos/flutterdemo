@@ -1,61 +1,66 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-Future<Game> fetchGame() async {
-  final response = await http.get('http://192.168.1.216:45455/api/games/Random');
-  final jsonResponse = json.decode(response.body);
-  return Game.fromJson(jsonResponse);
-}
+void main() => runApp(new HelloWorld());
 
-class Game{
-        final String title;
-        final String platform;
-        final String genre;
-
-        Game({this.title, this.platform, this.genre});
-
-    factory Game.fromJson(Map<String, dynamic> json){
-      return new Game(
-        title: json['title'],
-        platform: json['platform'],
-        genre: json['genre']
-      );
-    }
-}
-
-void main() => runApp(new MyApp());
-
-class MyApp extends StatelessWidget {
+class HelloWorld extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Fetch Data Example',
+      title: 'Flutter hello',
       theme: new ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
       ),
-      home: new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Get me a random game'),
-        ),
-        body: new Center(
-          child: new FutureBuilder<Game>(
-            future: fetchGame(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return new Text(snapshot.data.title);
-              } else if (snapshot.hasError) {
-                return new Text("${snapshot.error}");
-              }
+            home: new MyHomePage(title: 'That hello world app'),
+    );
+  }
+}
 
-              // By default, show a loading spinner
-              return new CircularProgressIndicator();
-            },
-          ),
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _MyHomePageState createState() => new _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text(widget.title),
+      ),
+      body: new Center(
+        child: new Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Text(
+              'How many presses:',
+            ),
+            new Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.display1,
+            ),
+             new Text(
+              'Press to say hello'
+            ),
+          ],
         ),
       ),
+      floatingActionButton: new FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: new Icon(Icons.add),
+      ), 
     );
   }
 }
