@@ -49,8 +49,6 @@ class ApiDemo extends StatelessWidget {
               } else if (snapshot.hasError) {
                 return new Text("${snapshot.error}");
               }
-
-              // By default, show a loading spinner
               return new CircularProgressIndicator();
             },
           ),
