@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
-import 'package:http/http.dart' as http;
-
 
 void main() => runApp(new ListViewDemo());
 
